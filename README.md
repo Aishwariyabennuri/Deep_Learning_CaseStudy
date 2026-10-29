@@ -1,49 +1,102 @@
-Deep Learning-Based Fashion Visual Search System
-Case Study: ResNet50 Feature Extraction + Metadata Filtering
-Status: Initial prototype / case study
-Environment: Google Colab (recommended)
-1. Overview
-This project implements an image-based fashion product search system. A user uploads a fashion image, and the system finds visually similar products from a fashion-product image catalog.
-The system uses:
-ResNet50 pretrained on ImageNet to extract visual features.
-Global Average Pooling to convert convolutional feature maps into feature vectors.
-A multi-output classification head to predict gender and article type.
-Metadata filtering to narrow the candidate products.
-Cosine similarity to rank the remaining products by visual similarity.
-The current implementation is a research/case-study prototype. It is not yet a production web application.
-2. Workflow
-Download the Fashion Product Images Dataset through kagglehub.
-Locate styles.csv and map product IDs to image files.
-Clean missing metadata and retain products with usable images.
-Load ImageNet-pretrained ResNet50 without its classification top.
-Extract and L2-normalize image feature vectors.
-Train a small neural-network classification head for gender and article type.
-Upload a query image.
-Predict its gender and article type.
-Filter the catalog by predicted metadata.
-Rank candidates using cosine similarity and display the top five results.
-3. Dataset
-The notebook downloads the Fashion Product Images Dataset using KaggleHub:
+
+👗 Deep Learning-Based Fashion Visual Search
+Find fashion products by image using deep learning and visual similarity.
+ResNet50 · Feature Extraction · Metadata Filtering · Cosine Similarity
+
+
+� � � � �
+
+✨ Project Overview
+Imagine finding a fashion product simply by uploading a picture. This project explores that idea with a deep learning-powered visual search system that compares an uploaded fashion image with a catalog of fashion product images and returns visually similar results.
+The system uses a pretrained ResNet50 model to extract image features, predicts product metadata such as gender and article type, narrows down candidate products using those predictions, and ranks the candidates by cosine similarity.
+Project goal: Make fashion discovery more visual, intuitive, and convenient than searching by text alone.
+🚀 Key Features
+🖼️ Image-based search — use a fashion image as the search query.
+🧠 Deep feature extraction — leverage ImageNet-pretrained ResNet50.
+🏷️ Metadata prediction — predict gender and article type with a neural-network classification head.
+🎯 Smart candidate filtering — narrow the catalog using predicted metadata.
+📊 Similarity ranking — rank candidate images using cosine similarity.
+🔝 Top-5 recommendations — display the five highest-ranked candidates from the filtered set.
+☁️ Google Colab workflow — run the notebook in a cloud-based Python environment.
+🧭 How It Works
+       Upload a fashion image
+                 │
+                 ▼
+     Preprocess the query image
+                 │
+                 ▼
+      ResNet50 feature extraction
+                 │
+        ┌────────┴────────┐
+        ▼                 ▼
+  Image feature       Metadata prediction
+     vector          (gender + article type)
+        │                 │
+        │                 ▼
+        │          Filter product catalog
+        │                 │
+        └────────┬────────┘
+                 ▼
+       Cosine similarity ranking
+                 │
+                 ▼
+      Display the top 5 matches
+🔬 Technical Pipeline
+Dataset preparation: Download the Fashion Product Images Dataset using KaggleHub.
+Metadata cleaning: Read styles.csv, handle missing metadata, and retain products with usable image files.
+Feature extraction: Load ResNet50 without its original classification top and apply Global Average Pooling.
+Feature normalization: L2-normalize the extracted feature vectors for similarity comparison.
+Metadata classification: Train a neural-network head to predict gender and article type.
+Query processing: Upload a fashion image and obtain its predicted metadata and visual feature vector.
+Candidate filtering: Narrow the catalog using the predicted metadata.
+Similarity search: Rank candidates with cosine similarity and show the top five results.
+🛠️ Technology Stack
+Technology
+Purpose
+Python
+Core programming language
+TensorFlow / Keras
+Deep learning and model construction
+ResNet50
+Pretrained visual feature extraction
+Scikit-learn
+Machine-learning utilities
+Pandas & NumPy
+Dataset preparation and numerical operations
+Pillow (PIL)
+Image loading and processing
+Matplotlib
+Visualization
+tqdm
+Progress bars
+KaggleHub
+Dataset download
+Google Colab
+Notebook execution and image upload workflow
+📦 Dataset
+This project uses the Fashion Product Images Dataset, downloaded through KaggleHub.
+Dataset identifier:
 dataset_path = kagglehub.dataset_download(
     "paramaggarwal/fashion-product-images-dataset"
 )
-The dataset is subject to its publisher's terms and license. Review the dataset page and license before redistributing any images or dataset files. Do not commit the full dataset to GitHub.
-4. Requirements
-The notebook installs these Python packages:
+The notebook uses product image files and the styles.csv metadata file to associate product IDs with their attributes and images.
+Before sharing: Review the dataset publisher's current license and citation requirements. Do not upload the complete dataset to this repository unless redistribution is permitted.
+⚙️ Getting Started
+Option 1 — Run in Google Colab (recommended)
+Open Google Colab.
+Upload the project notebook (.ipynb) or create a notebook and copy in the project code.
+Run the package installation cell.
+Run the dataset download and metadata preparation cells.
+Run feature extraction and classifier training.
+Upload a fashion image when prompted.
+Review the predicted metadata and the top-five visual matches.
+Option 2 — Install the dependencies
+Run this command in a Python environment that supports the required packages:
 pip install kagglehub tensorflow scikit-learn pandas matplotlib pillow tqdm
-It also uses google.colab.files, so the upload workflow is intended for Google Colab.
-5. Run the project in Google Colab
-Create a new notebook at Google Colab.
-Paste the project code into notebook cells, or upload the .ipynb file.
-Run the installation cell.
-Run the dataset download, metadata preparation, and feature extraction cells.
-Run the classifier training cell.
-When prompted, upload a query fashion image.
-Review the predicted metadata and the top-five visual search results.
-Save the notebook using File → Download → Download .ipynb.
-Important: The first run may take time because the dataset is downloaded and features are extracted for many images. A GPU runtime may speed up inference and training; select Runtime → Change runtime type in Colab if a GPU is available.
-6. Repository structure
-Suggested structure:
+The current image-upload flow uses google.colab.files, so it is designed for Google Colab. A local Python environment may require changes to the upload code.
+💡 Runtime Tip
+The first run may take time because the dataset must be downloaded and image features extracted. If available, enable a GPU in Colab using Runtime → Change runtime type to help speed up model computation.
+📁 Suggested Repository Structure
 fashion-visual-search/
 ├── README.md
 ├── Fashion_Visual_Search_Case_Study.ipynb
@@ -54,32 +107,54 @@ fashion-visual-search/
 ├── results/
 │   └── screenshots/
 └── .gitignore
-Add your actual notebook, presentation, report, and screenshots using the filenames above or update the names to match your files. Do not upload the dataset, model weights, API keys, credentials, or large generated files unless you have a clear reason and permission.
-7. Methodology
-Feature extraction
-ResNet50 is loaded with ImageNet weights and include_top=False. Global Average Pooling produces one feature vector per image. Features are L2-normalized before similarity comparison.
-Classification
-A dense layer with 512 ReLU units and dropout feeds two softmax outputs:
+Update the filenames to match the files actually included in your repository.
+🧠 Model & Methodology
+ResNet50 Feature Extraction
+ResNet50, pretrained on ImageNet, is loaded without its original classification layer (include_top=False). Global Average Pooling converts its convolutional feature maps into a compact feature vector for each image. The vectors are L2-normalized before similarity comparison.
+Multi-Output Classification
+A small neural-network head uses a 512-unit ReLU dense layer, dropout, and two softmax outputs to predict:
 Gender
 Article type
-The classifier is trained for eight epochs in the provided code. Accuracy should be reported only after the notebook has actually run; no performance values are assumed in this README.
-Similarity search
-The query image is passed through the same feature extractor. Candidate features are compared using cosine similarity, and the highest-scoring candidates are displayed.
-8. Current limitations and recommended improvements
-Index alignment: The code builds path_to_index from valid_paths, then reorders df to match valid_paths. Later, filtered_indices are built using path_to_index (feature-matrix indices), but results are retrieved using df.iloc[original_index]. This can mismatch dataframe rows and feature vectors. Use a single stable feature index and keep it aligned with both the dataframe and feature matrix.
-Strict metadata filtering: A wrong predicted gender/article type can exclude visually relevant products. Consider confidence-aware filtering or a fallback to the full catalog.
-Class imbalance: Some article types may have many fewer samples than others. Report per-class precision/recall and consider stratified splits where feasible.
-Evaluation: Add a held-out test set and metrics such as top-k retrieval accuracy, Precision@K, Recall@K, and a confusion matrix for classification.
-Feature caching: Save feature vectors and metadata so the notebook does not need to extract all features on every run.
-Robust image handling: Log unreadable files rather than silently skipping every exception.
-Deployment: A future version could provide a Streamlit/FastAPI interface and a vector index for faster search at larger catalog sizes.
-9. Reproducibility and responsible use
-Record the dataset version, runtime type, package versions, and random seeds.
-Do not claim accuracy or retrieval quality unless it is measured and recorded.
-Check the dataset license before sharing any images or derived assets.
-Add only project files to GitHub; exclude datasets, secrets, caches, and large artifacts.
-10. Credits
-ResNet50 / TensorFlow Keras Applications documentation
-KaggleHub dataset download utility
-Fashion Product Images Dataset publisher: paramaggarwal
-Please check the dataset's official Kaggle page for the current license and citation requirements.
+The provided code trains this classifier for eight epochs. Actual accuracy and generalization must be measured by running the notebook and evaluating it on held-out data.
+Cosine Similarity
+The query image is processed using the same feature-extraction pipeline. Its feature vector is compared with candidate product vectors using cosine similarity, and the highest-scoring candidates are returned.
+⚠️ Current Limitations
+This repository is a research / case-study prototype, not a production-ready web application.
+Feature-index alignment: Dataframe rows and feature-matrix indices may become misaligned during filtering and reordering. Use one stable index mapping for both metadata and feature vectors before trusting retrieved results.
+Strict metadata filtering: Incorrect metadata predictions can exclude relevant products. Confidence-aware filtering or a fallback search across the full catalog could improve recall.
+Class imbalance: Some article types may have fewer examples than others. Evaluate per-class precision and recall and consider stratified data splits where feasible.
+Evaluation: The README does not claim measured accuracy or retrieval quality. Add a held-out test set and report metrics such as Precision@K, Recall@K, top-k retrieval accuracy, and a classification confusion matrix.
+Repeated computation: Feature caching would reduce the need to extract features again on every run.
+Image errors: Add logging for unreadable or missing images to make dataset issues easier to diagnose.
+Deployment: A web interface and a scalable vector index have not yet been implemented.
+🛣️ Future Enhancements
+[ ]
+Fix and test the alignment between product metadata and image-feature indices.
+[ ]
+Cache extracted feature vectors for faster repeated searches.
+[ ]
+Add confidence-aware metadata filtering and a full-catalog fallback.
+[ ]
+Evaluate classification and retrieval quality on a held-out test set.
+[ ]
+Display similarity scores alongside recommended products.
+[ ]
+Build an interactive interface with Streamlit or FastAPI.
+[ ]
+Explore vector indexing for faster search on larger catalogs.
+[ ]
+Add robust logging and input-image validation.
+🔐 Reproducibility & Responsible Use
+Record dataset version, package versions, runtime type, and random seeds.
+Report only metrics that have actually been measured.
+Check the dataset license before redistributing images or derived assets.
+Keep credentials, API keys, datasets, caches, and large generated artifacts out of Git.
+Use a .gitignore file to help prevent accidental commits of unnecessary files.
+📚 Credits & References
+ResNet50: TensorFlow / Keras Applications
+Dataset download: KaggleHub
+Dataset: Fashion Product Images Dataset by paramaggarwal
+Refer to the dataset's official Kaggle page for its latest license and citation requirements.
+
+Built to explore the intersection of fashion discovery and computer vision. ✨
+Current stage: Research prototype · Google Colab notebook
