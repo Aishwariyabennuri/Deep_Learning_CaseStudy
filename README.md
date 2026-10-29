@@ -1,160 +1,575 @@
 
-👗 Deep Learning-Based Fashion Visual Search
-Find fashion products by image using deep learning and visual similarity.
-ResNet50 · Feature Extraction · Metadata Filtering · Cosine Similarity
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#101827">
+    <title>Fashion Visual Search System</title>
 
+    <style>
+        :root {
+            --bg: #0b1120;
+            --card: #151f32;
+            --accent: #a78bfa;
+            --text: #f1f5f9;
+            --muted: #a5b4c8;
+            --border: #29364d;
+        }
 
-� � � � �
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-✨ Project Overview
-Imagine finding a fashion product simply by uploading a picture. This project explores that idea with a deep learning-powered visual search system that compares an uploaded fashion image with a catalog of fashion product images and returns visually similar results.
-The system uses a pretrained ResNet50 model to extract image features, predicts product metadata such as gender and article type, narrows down candidate products using those predictions, and ranks the candidates by cosine similarity.
-Project goal: Make fashion discovery more visual, intuitive, and convenient than searching by text alone.
-🚀 Key Features
-🖼️ Image-based search — use a fashion image as the search query.
-🧠 Deep feature extraction — leverage ImageNet-pretrained ResNet50.
-🏷️ Metadata prediction — predict gender and article type with a neural-network classification head.
-🎯 Smart candidate filtering — narrow the catalog using predicted metadata.
-📊 Similarity ranking — rank candidate images using cosine similarity.
-🔝 Top-5 recommendations — display the five highest-ranked candidates from the filtered set.
-☁️ Google Colab workflow — run the notebook in a cloud-based Python environment.
-🧭 How It Works
-       Upload a fashion image
-                 │
-                 ▼
-     Preprocess the query image
-                 │
-                 ▼
-      ResNet50 feature extraction
-                 │
-        ┌────────┴────────┐
-        ▼                 ▼
-  Image feature       Metadata prediction
-     vector          (gender + article type)
-        │                 │
-        │                 ▼
-        │          Filter product catalog
-        │                 │
-        └────────┬────────┘
-                 ▼
-       Cosine similarity ranking
-                 │
-                 ▼
-      Display the top 5 matches
-🔬 Technical Pipeline
-Dataset preparation: Download the Fashion Product Images Dataset using KaggleHub.
-Metadata cleaning: Read styles.csv, handle missing metadata, and retain products with usable image files.
-Feature extraction: Load ResNet50 without its original classification top and apply Global Average Pooling.
-Feature normalization: L2-normalize the extracted feature vectors for similarity comparison.
-Metadata classification: Train a neural-network head to predict gender and article type.
-Query processing: Upload a fashion image and obtain its predicted metadata and visual feature vector.
-Candidate filtering: Narrow the catalog using the predicted metadata.
-Similarity search: Rank candidates with cosine similarity and show the top five results.
-🛠️ Technology Stack
-Technology
-Purpose
-Python
-Core programming language
-TensorFlow / Keras
-Deep learning and model construction
-ResNet50
-Pretrained visual feature extraction
-Scikit-learn
-Machine-learning utilities
-Pandas & NumPy
-Dataset preparation and numerical operations
-Pillow (PIL)
-Image loading and processing
-Matplotlib
-Visualization
-tqdm
-Progress bars
-KaggleHub
-Dataset download
-Google Colab
-Notebook execution and image upload workflow
-📦 Dataset
-This project uses the Fashion Product Images Dataset, downloaded through KaggleHub.
-Dataset identifier:
-dataset_path = kagglehub.dataset_download(
-    "paramaggarwal/fashion-product-images-dataset"
-)
-The notebook uses product image files and the styles.csv metadata file to associate product IDs with their attributes and images.
-Before sharing: Review the dataset publisher's current license and citation requirements. Do not upload the complete dataset to this repository unless redistribution is permitted.
-⚙️ Getting Started
-Option 1 — Run in Google Colab (recommended)
-Open Google Colab.
-Upload the project notebook (.ipynb) or create a notebook and copy in the project code.
-Run the package installation cell.
-Run the dataset download and metadata preparation cells.
-Run feature extraction and classifier training.
-Upload a fashion image when prompted.
-Review the predicted metadata and the top-five visual matches.
-Option 2 — Install the dependencies
-Run this command in a Python environment that supports the required packages:
-pip install kagglehub tensorflow scikit-learn pandas matplotlib pillow tqdm
-The current image-upload flow uses google.colab.files, so it is designed for Google Colab. A local Python environment may require changes to the upload code.
-💡 Runtime Tip
-The first run may take time because the dataset must be downloaded and image features extracted. If available, enable a GPU in Colab using Runtime → Change runtime type to help speed up model computation.
-📁 Suggested Repository Structure
-fashion-visual-search/
-├── README.md
-├── Fashion_Visual_Search_Case_Study.ipynb
-├── report/
-│   └── Fashion_Visual_Search_Case_Study_Report.pdf
-├── presentation/
-│   └── Fashion_Visual_Search_Presentation.pptx
-├── results/
-│   └── screenshots/
-└── .gitignore
-Update the filenames to match the files actually included in your repository.
-🧠 Model & Methodology
-ResNet50 Feature Extraction
-ResNet50, pretrained on ImageNet, is loaded without its original classification layer (include_top=False). Global Average Pooling converts its convolutional feature maps into a compact feature vector for each image. The vectors are L2-normalized before similarity comparison.
-Multi-Output Classification
-A small neural-network head uses a 512-unit ReLU dense layer, dropout, and two softmax outputs to predict:
-Gender
-Article type
-The provided code trains this classifier for eight epochs. Actual accuracy and generalization must be measured by running the notebook and evaluating it on held-out data.
-Cosine Similarity
-The query image is processed using the same feature-extraction pipeline. Its feature vector is compared with candidate product vectors using cosine similarity, and the highest-scoring candidates are returned.
-⚠️ Current Limitations
-This repository is a research / case-study prototype, not a production-ready web application.
-Feature-index alignment: Dataframe rows and feature-matrix indices may become misaligned during filtering and reordering. Use one stable index mapping for both metadata and feature vectors before trusting retrieved results.
-Strict metadata filtering: Incorrect metadata predictions can exclude relevant products. Confidence-aware filtering or a fallback search across the full catalog could improve recall.
-Class imbalance: Some article types may have fewer examples than others. Evaluate per-class precision and recall and consider stratified data splits where feasible.
-Evaluation: The README does not claim measured accuracy or retrieval quality. Add a held-out test set and report metrics such as Precision@K, Recall@K, top-k retrieval accuracy, and a classification confusion matrix.
-Repeated computation: Feature caching would reduce the need to extract features again on every run.
-Image errors: Add logging for unreadable or missing images to make dataset issues easier to diagnose.
-Deployment: A web interface and a scalable vector index have not yet been implemented.
-🛣️ Future Enhancements
-[ ]
-Fix and test the alignment between product metadata and image-feature indices.
-[ ]
-Cache extracted feature vectors for faster repeated searches.
-[ ]
-Add confidence-aware metadata filtering and a full-catalog fallback.
-[ ]
-Evaluate classification and retrieval quality on a held-out test set.
-[ ]
-Display similarity scores alongside recommended products.
-[ ]
-Build an interactive interface with Streamlit or FastAPI.
-[ ]
-Explore vector indexing for faster search on larger catalogs.
-[ ]
-Add robust logging and input-image validation.
-🔐 Reproducibility & Responsible Use
-Record dataset version, package versions, runtime type, and random seeds.
-Report only metrics that have actually been measured.
-Check the dataset license before redistributing images or derived assets.
-Keep credentials, API keys, datasets, caches, and large generated artifacts out of Git.
-Use a .gitignore file to help prevent accidental commits of unnecessary files.
-📚 Credits & References
-ResNet50: TensorFlow / Keras Applications
-Dataset download: KaggleHub
-Dataset: Fashion Product Images Dataset by paramaggarwal
-Refer to the dataset's official Kaggle page for its latest license and citation requirements.
+        html {
+            scroll-behavior: smooth;
+        }
 
-Built to explore the intersection of fashion discovery and computer vision. ✨
-Current stage: Research prototype · Google Colab notebook
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+        }
+
+        a {
+            color: #c4b5fd;
+            text-decoration: none;
+        }
+
+        .container {
+            width: min(1100px, 92%);
+            margin: auto;
+        }
+
+        header {
+            padding: 75px 0 55px;
+            text-align: center;
+            background:
+                radial-gradient(ellipse at top, #35245f 0%, transparent 65%),
+                var(--bg);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 7px 14px;
+            border: 1px solid #6854a3;
+            border-radius: 30px;
+            color: #ddd6fe;
+            font-size: 13px;
+            margin-bottom: 22px;
+        }
+
+        h1 {
+            font-size: clamp(30px, 5vw, 48px);
+            line-height: 1.2;
+            letter-spacing: -1px;
+            margin-bottom: 20px;
+        }
+
+        h1 span {
+            color: var(--accent);
+        }
+
+        .subtitle {
+            max-width: 700px;
+            margin: 0 auto 28px;
+            color: var(--muted);
+            font-size: 17px;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 11px 20px;
+            border-radius: 9px;
+            font-weight: bold;
+            background: var(--accent);
+            color: #17102c;
+            transition: 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            opacity: 0.9;
+        }
+
+        .btn.secondary {
+            color: var(--text);
+            background: var(--card);
+            border: 1px solid var(--border);
+        }
+
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background: rgba(11, 17, 32, 0.96);
+            border-bottom: 1px solid var(--border);
+            padding: 13px 0;
+        }
+
+        .nav-links {
+            display: flex;
+            justify-content: center;
+            gap: 22px;
+            flex-wrap: wrap;
+            font-size: 14px;
+        }
+
+        main {
+            padding: 35px 0 65px;
+        }
+
+        section {
+            margin: 30px 0 45px;
+            scroll-margin-top: 75px;
+        }
+
+        h2 {
+            font-size: 25px;
+            margin-bottom: 17px;
+        }
+
+        h2::before {
+            content: "";
+            display: inline-block;
+            width: 5px;
+            height: 24px;
+            background: var(--accent);
+            border-radius: 5px;
+            margin-right: 11px;
+            vertical-align: -4px;
+        }
+
+        p {
+            color: var(--muted);
+            margin-bottom: 13px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns:
+                repeat(auto-fit, minmax(220px, 1fr));
+            gap: 17px;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 23px;
+            transition: border-color 0.2s,
+                        transform 0.2s;
+        }
+
+        .card:hover {
+            border-color: #8066cb;
+            transform: translateY(-3px);
+        }
+
+        .icon {
+            font-size: 28px;
+            margin-bottom: 12px;
+        }
+
+        h3 {
+            font-size: 17px;
+            margin-bottom: 9px;
+        }
+
+        .card p {
+            font-size: 14px;
+            margin-bottom: 0;
+        }
+
+        .steps {
+            counter-reset: step;
+            display: grid;
+            gap: 14px;
+        }
+
+        .step {
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+            background: var(--card);
+            border: 1px solid var(--border);
+            padding: 19px;
+            border-radius: 12px;
+        }
+
+        .number {
+            flex-shrink: 0;
+            display: grid;
+            place-items: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: #30234f;
+            color: #ddd6fe;
+            font-weight: bold;
+        }
+
+        .step p {
+            margin: 0;
+            font-size: 14px;
+        }
+
+        .tech-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .tech {
+            background: #1b2940;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 8px 13px;
+            font-size: 14px;
+        }
+
+        pre {
+            background: #080d18;
+            color: #dbeafe;
+            border: 1px solid var(--border);
+            padding: 18px;
+            border-radius: 12px;
+            overflow-x: auto;
+            margin: 14px 0;
+            font-size: 14px;
+        }
+
+        .note {
+            padding: 17px;
+            border-left: 4px solid var(--accent);
+            background: #17182c;
+            border-radius: 0 10px 10px 0;
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px 15px;
+            border-top: 1px solid var(--border);
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        @media (max-width: 600px) {
+            header {
+                padding: 48px 0 40px;
+            }
+
+            .nav-links {
+                gap: 12px;
+                font-size: 12px;
+            }
+
+            .card {
+                padding: 18px;
+            }
+
+            h2 {
+                font-size: 22px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <div class="container">
+        <div class="tag">DEEP LEARNING · COMPUTER VISION</div>
+
+        <h1>
+            Fashion <span>Visual Search</span><br>
+            System
+        </h1>
+
+        <p class="subtitle">
+            Discover visually similar fashion products using
+            deep learning, ResNet50 feature extraction,
+            and intelligent similarity matching.
+        </p>
+
+        <div class="buttons">
+            <a class="btn" href="#about">Explore Project ↓</a>
+            <a class="btn secondary"
+               href="https://github.com/"
+               target="_blank" rel="noopener">
+                GitHub
+            </a>
+        </div>
+    </div>
+</header>
+
+<nav>
+    <div class="container nav-links">
+        <a href="#about">About</a>
+        <a href="#features">Features</a>
+        <a href="#workflow">Workflow</a>
+        <a href="#technology">Technology</a>
+        <a href="#installation">Setup</a>
+        <a href="#future">Future Scope</a>
+    </div>
+</nav>
+
+<main class="container">
+
+    <section id="about">
+        <h2>About the Project</h2>
+
+        <p>
+            The Deep Learning Based Fashion Visual Search System
+            is designed to retrieve visually similar fashion
+            products from a collection of images.
+        </p>
+
+        <p>
+            Instead of relying only on text-based searches,
+            the system extracts visual features from images
+            using a pretrained ResNet50 model. It compares
+            these features using cosine similarity and can
+            apply metadata filtering to refine the results.
+        </p>
+
+        <div class="note">
+            <strong>Project objective</strong>
+            <p>
+                Make fashion product discovery easier by finding
+                visually similar items from an image.
+            </p>
+        </div>
+    </section>
+
+    <section id="features">
+        <h2>Key Features</h2>
+
+        <div class="grid">
+            <div class="card">
+                <div class="icon">🧠</div>
+                <h3>Deep Feature Extraction</h3>
+                <p>
+                    Uses pretrained ResNet50 to extract meaningful
+                    visual representations of fashion images.
+                </p>
+            </div>
+
+            <div class="card">
+                <div class="icon">🔎</div>
+                <h3>Visual Search</h3>
+                <p>
+                    Finds products with visual characteristics
+                    similar to a query image.
+                </p>
+            </div>
+
+            <div class="card">
+                <div class="icon">📐</div>
+                <h3>Cosine Similarity</h3>
+                <p>
+                    Measures similarity between feature vectors
+                    to rank candidate products.
+                </p>
+            </div>
+
+            <div class="card">
+                <div class="icon">🏷️</div>
+                <h3>Metadata Filtering</h3>
+                <p>
+                    Uses available product metadata to narrow
+                    the search results where applicable.
+                </p>
+            </div>
+
+            <div class="card">
+                <div class="icon">👕</div>
+                <h3>Top-5 Retrieval</h3>
+                <p>
+                    Retrieves the five highest-ranked matching
+                    products from the search collection.
+                </p>
+            </div>
+
+            <div class="card">
+                <div class="icon">⚡</div>
+                <h3>Automated Processing</h3>
+                <p>
+                    Processes image features and similarity
+                    calculations using Python libraries.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <section id="workflow">
+        <h2>How It Works</h2>
+
+        <div class="steps">
+            <div class="step">
+                <div class="number">01</div>
+                <div>
+                    <h3>Dataset Preparation</h3>
+                    <p>
+                        Load fashion images and their associated
+                        metadata into the system.
+                    </p>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="number">02</div>
+                <div>
+                    <h3>Feature Extraction</h3>
+                    <p>
+                        Use ResNet50 to convert images into
+                        numerical feature vectors.
+                    </p>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="number">03</div>
+                <div>
+                    <h3>Query Image Processing</h3>
+                    <p>
+                        Extract features from the image supplied
+                        for the visual search.
+                    </p>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="number">04</div>
+                <div>
+                    <h3>Similarity Ranking</h3>
+                    <p>
+                        Compare the query features with stored
+                        features using cosine similarity.
+                    </p>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="number">05</div>
+                <div>
+                    <h3>Display Results</h3>
+                    <p>
+                        Apply applicable metadata filters and
+                        retrieve the top five matching products.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="technology">
+        <h2>Technology Stack</h2>
+
+        <p>
+            The project combines deep learning, image processing,
+            and data analysis tools.
+        </p>
+
+        <div class="tech-list">
+            <span class="tech">Python</span>
+            <span class="tech">TensorFlow</span>
+            <span class="tech">ResNet50</span>
+            <span class="tech">NumPy</span>
+            <span class="tech">Pandas</span>
+            <span class="tech">Scikit-learn</span>
+            <span class="tech">Matplotlib</span>
+            <span class="tech">Pillow</span>
+            <span class="tech">KaggleHub</span>
+        </div>
+    </section>
+
+    <section id="installation">
+        <h2>Getting Started</h2>
+
+        <h3>1. Clone the Repository</h3>
+        <pre><code>git clone YOUR_REPOSITORY_URL
+cd YOUR_PROJECT_FOLDER</code></pre>
+
+        <h3>2. Install Dependencies</h3>
+        <pre><code>pip install tensorflow scikit-learn pandas matplotlib pillow tqdm kagglehub</code></pre>
+
+        <h3>3. Run the Project</h3>
+        <p>
+            Open the project notebook in Jupyter Notebook
+            or Google Colab, configure the dataset path,
+            and execute the cells in order.
+        </p>
+
+        <pre><code>jupyter notebook</code></pre>
+
+        <p>
+            Replace the repository URL and folder name above
+            with your actual GitHub repository details.
+        </p>
+    </section>
+
+    <section id="future">
+        <h2>Future Enhancements</h2>
+
+        <div class="grid">
+            <div class="card">
+                <h3>🌐 Web Interface</h3>
+                <p>
+                    Build an interactive interface for uploading
+                    images and browsing search results.
+                </p>
+            </div>
+
+            <div class="card">
+                <h3>🎯 Improved Ranking</h3>
+                <p>
+                    Explore additional ranking methods and
+                    evaluate retrieval quality.
+                </p>
+            </div>
+
+            <div class="card">
+                <h3>📱 Mobile Support</h3>
+                <p>
+                    Develop a responsive experience for
+                    fashion searches on mobile devices.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <section id="conclusion">
+        <h2>Conclusion</h2>
+
+        <p>
+            This project demonstrates how deep learning can
+            support content-based fashion image retrieval.
+            By combining ResNet50 feature extraction, cosine
+            similarity, and metadata filtering, it provides
+            a foundation for building an intelligent fashion
+            discovery application.
+        </p>
+    </section>
+
+</main>
+
+<footer>
+    <p>
+        Deep Learning Based Fashion Visual Search System
+    </p>
+    <p>Built with Python, TensorFlow and ResNet50</p>
+</footer>
+
+</body>
+</html>
